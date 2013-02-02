@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>Mutual friends</title>
+    <script src="mapreduce/jquery.js" type="text/javascript"></script>
+    <script src="static/js/custom.js" type="text/javascript"></script>
+<style type="text/css">
+.center
+{
+margin-top:20px;
+margin-left:auto;
+margin-right:auto;
+width:75%;
+background-color:#FFFFFF;
+text-align:left;
+}
+.header {
+    min-height:100px;
+    vertical-align:text-top;
+    background:#222222;
+    display: inline-block;
+    width:100%;
+}
+.logout {
+    float:right;
+    margin-top:5px;
+    margin-right:10px;
+    background:#FFFFFF;
+}
+.current {
+    vertical-align:text-top;
+    background:#FFFFFF;
+    margin-left:10px;
+    margin-right:10px;
+    margin-bottom:30px;
+}
+.mutual {
+    vertical-align:text-top;
+    background:#FFFFFF;
+    margin-left:10px;
+    margin-right:10px;
+    margin-bottom:10px;
+}
+
+.person {
+    vertical-align:text-top;
+    padding-top:10px;
+    padding-bottom:40px;
+    margin-left:10px;
+    margin-right:60px;
+}
+
+.part {
+    min-height:30px;
+    vertical-align:text-top;
+    display: inline-block;
+    width:33%;
+}
+</style>
+  </head>
+  <body bgcolor="#666666">
+    <div class="center">
+      <div class="header">
+      	<h1 align="middle"><font size="72" color="#cccccc">SOCIAL NETWORK</font></h1>
+      </div>
+      <div class="logout">
+      	<font><a style="vertical-align:middle" href="{{ url }}">{{ url_linktext }}</a></font>
+      </div>
+      <div class="current" style=" border-bottom: 8px ridge black;">
+	<h2>
+      	<img src="http://icons.iconarchive.com/icons/artua/dragon-soft/128/User-icon.png" alt="Current user" style="vertical-align:middle"/> 		<font>{{ username }}</font>
+	</h2>
+      </div>
+      <div style="padding-left:10px">
+        {% if com==0 %}
+        DOES NOT HAVE FRIENDS
+        {% else %}
+        FRIENDS: 
+	{% for e in common %}
+	{{ e.userB }}
+	{% endfor %}
+	{% endif %}
+      </div>
+      <div class="mutual" style=" border-top: 4px ridge black;border-bottom: 8px ridge black;">
+	<h2 align="middle">People</h2>
+        <table>
+	{% for f in dev %}
+        <div class="person">
+	<img src="http://www.veryicon.com/icon/preview/Avatar/People/User%20Icon.jpg" alt="Current user" style="vertical-align:middle"/> 		<b><font>{{ f[0] }}</font></b>
+	{% if f[1]!=0 %}
+        <font style="padding-left:10px">Mutual Friends: </font>
+	{% for s in f[2] %}
+	{% if s=="" %}
+	Ninguno
+	{% endif %}
+        {{ s }}
+        {% endfor %}
+	{% endif %}
+	</div>
+        {% endfor %}
+	</table>
+      </div>
+      {% if calcular %}
+        {% for item in items %}
+        <tr>
+          <td><input type="radio" onclick="updateForm('{{ item.key() }}',
+            '{{ item.blobkey }}', '{{ item.filename }}');"></td>
+          <td><a href="/blobstore/{{ item.blobkey }}">{{ item.filename }}</a></td>
+	<td>
+            {% if item.findingfriends_link %}
+            <a href="{{ item.findingfriends_link }}">friends</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+       <form action="/" method="post">
+        Input File: <label id="jobName">none selected</label>
+        <input type="hidden" name="filekey" id="filekey" value="">
+        <input type="hidden" name="blobkey" id="blobkey" value="">
+        <br />
+        <br />
+        <table>
+          <tr>
+	    <td><input type="submit" id="finding_friends" name="finding_friends" value="Finding Friends" disabled="true"></td>
+          </tr>
+        </table>
+      </form>
+      {% endif %}
+      {% if cambiar %}
+      {% for item in items %}
+        <tr>
+            <a href="{{ item.findingfriends_link }}">friends</a>
+          </td>
+        </tr>
+      {% endfor %}
+      <form action="/" method="post">
+	<input type='submit' name='change' id='change' value="Change Relationships File">
+      </form>
+      {% endif %}
+      {% if subir %}
+	<div>Upload relationships data file:</div>
+      <form action="{{ upload_url }}" method="POST" enctype="multipart/form-data">
+        <table>
+          <tr>
+            <td>From your computer:</td>
+            <td><input type='file' name='file' id='file' /></td>
+          </tr>
+          <tr>
+            <td>Give it a name:</td>
+            <td><input type='textfield' id="name" name='name' /></td>
+          </tr>
+          <tr>
+            <td colspan=2 align="center"><input type='submit' name='submit' value='Upload'></td>
+          </tr>
+        </table>
+      </form>
+      {% endif %}
+      </div>
+  </body>
+</html>
